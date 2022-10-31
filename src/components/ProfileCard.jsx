@@ -14,7 +14,7 @@ const ProfileCard = ({ followingCard }) => {
         margin: 0 auto;
         border-radius: 1rem;
         justify-content: space-between;
-        border: 2px solid red;
+        /* border: 2px solid red; */
         ${mobile1({width: '95%'})}
     `;
 
