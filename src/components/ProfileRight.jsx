@@ -9,7 +9,7 @@ import { mobile1 } from '../styles/Responsive';
 const RightBox = styled.div`
     width: 68%;
     height: inherit;
-    ${mobile1({ width: '100%', height: '97vh', position:'absolute', top: '0', left: '0' })}
+    ${mobile1({ width: '100%', height: '97vh', position: 'absolute', top: '0', left: '0' })}
 `;
 
 const Header = styled.header`
@@ -78,7 +78,6 @@ const ProfileRight = ({ setOpenLeft, openLeft }) => {
                     <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
                     <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
                 </BlogsContainer>
-
             </RightBox>
         </>
     )
