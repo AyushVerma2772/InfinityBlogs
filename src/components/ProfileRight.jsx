@@ -77,6 +77,7 @@ const ProfileRight = ({ setOpenLeft, openLeft }) => {
                     <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
                     <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
                     <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
+                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
                 </BlogsContainer>
             </RightBox>
         </>
