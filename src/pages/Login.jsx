@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Heading2, purple, white, Input, Button, green, red, titleFont } from '../styles/commonComp';
-import  loadingGif  from '../images/loading-gif.gif';
-import { Link } from 'react-router-dom';
+import loadingGif from '../images/loading-gif.gif';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase-config';
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -64,19 +66,54 @@ const SignupBtn = styled(Link)`
 `;
 
 const Login = () => {
+
+  const [err, setErr] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+
+    const email = e.target[0].value;
+    const password = e.target[1].value;
+
+    if (email && password) {
+      setErr(null)
+
+      setLoading(true);
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        navigate("/");
+
+      } catch (error) {
+        setErr(error.message)
+      }
+      setLoading(false)
+    }
+
+    else {
+      setErr("Please fill all fields")
+    }
+
+  }
+
   return (
     <>
       <Wrapper className='d-flex'>
         <LoginCard className='d-flex' >
           <LoginHeading>Login</LoginHeading>
 
-          <LoginForm className='d-flex' >
+          <LoginForm className='d-flex' onSubmit={e => handelSubmit(e)}  >
             <Input type="email" id='email' placeholder='@email.com' />
             <Input type="password" id='password' placeholder='password' />
 
-            {/* <span><strong>Error !!!&nbsp;&nbsp;&nbsp;</strong>Lorem ipsum dolor sit amet. </span> */}
+            {
+              err && <span><strong>Error !!!&nbsp;&nbsp;&nbsp;</strong>{err}</span>
+            }
 
-            <LoginButton type="submit"><LoadingImg src={loadingGif} alt="" style={{display: "none"}} /> Login</LoginButton>
+            <LoginButton type="submit" className='d-flex'>
+              {loading && <LoadingImg src={loadingGif} alt="" />} Login
+            </LoginButton>
           </LoginForm>
 
           <Wrapper2 className='d-flex' >

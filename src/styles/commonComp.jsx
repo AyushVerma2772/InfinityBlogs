@@ -44,6 +44,13 @@ export const Heading4 = styled.h4`
     font-family: ${titleFont};
 `;
 
+export const Heading5 = styled.h4`
+    font-size: 2.5rem;
+    color: ${darkPurple};
+    text-align: center;
+    font-family: ${titleFont};
+`;
+
 export const Input = styled.input`
   outline: 0;
   border: 0;

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import ProfileLeft from '../components/ProfileLeft';
 import ProfileRight from '../components/ProfileRight';
@@ -14,11 +15,13 @@ const Profile = () => {
 
     const [openLeft, setOpenLeft] = useState(false);
 
+    const { userID } = useParams();
+
     return (
         <>
             <Wrapper className='d-flex'>
-                <ProfileLeft openLeft={openLeft} />
-                <ProfileRight setOpenLeft={setOpenLeft} openLeft={openLeft} />
+                <ProfileLeft openLeft={openLeft} userID={userID} />
+                <ProfileRight setOpenLeft={setOpenLeft} openLeft={openLeft} userID={userID}/>
             </Wrapper>
         </>
     )

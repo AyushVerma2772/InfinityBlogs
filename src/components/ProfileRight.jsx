@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { darkPurple, Heading3, lightPurple } from '../styles/commonComp';
+import { darkPurple, Heading3 } from '../styles/commonComp';
 import BlogCard from './BlogCard';
 import { FaUserCheck } from "react-icons/fa";
 import { mobile1 } from '../styles/Responsive';
-
+import { collection, onSnapshot } from 'firebase/firestore';
+import { db } from '../firebase-config';
+import infinityGif from '../images/infinity-gif.gif';
 
 const RightBox = styled.div`
     width: 68%;
@@ -28,7 +30,7 @@ const Header = styled.header`
 
     .following-icon {
         font-size: 3rem;
-        color: ${lightPurple};
+        color: ${darkPurple};
         z-index: 99 ;
         cursor: pointer;
         display: none;
@@ -42,9 +44,11 @@ const BlogsContainer = styled.div`
     width: 100%;
     z-index: 2;
     height: calc(90vh - 6rem);
+    ${mobile1({ height: 'calc(97vh - 6rem)' })}
     overflow: auto;
     &::-webkit-scrollbar {
         width: 0.8rem;
+        /* display: none; */
     }
   
     &::-webkit-scrollbar-thumb {
@@ -61,7 +65,25 @@ const Wrapper = styled.div`
 `;
 
 
-const ProfileRight = ({ setOpenLeft, openLeft }) => {
+const ProfileRight = (props) => {
+
+    const { setOpenLeft, openLeft, userID } = props;
+
+    const colRef = collection(db, "blogs");
+    const [blogs, setBlogs] = useState([]);
+
+    //! Realtime Read of blogs
+    useEffect(() => {
+        const unsub = onSnapshot(colRef, snapshot => {
+            setBlogs(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+        });
+
+        return () => {
+            unsub();
+        }
+
+        // eslint-disable-next-line
+    }, []);
 
 
     return (
@@ -72,13 +94,23 @@ const ProfileRight = ({ setOpenLeft, openLeft }) => {
                     <Heading3>Your Blogs</Heading3>
                 </Header>
 
-                <BlogsContainer >
-                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
-                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
-                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
-                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
-                    <Wrapper className='d-flex'><BlogCard profileBlog={true} /></Wrapper>
-                </BlogsContainer>
+                {
+                    !blogs.length ? <img src={infinityGif} alt="" className='loading-img' /> :
+                        <BlogsContainer >
+                            {
+                                blogs.map((ele) => {
+                                    return (
+                                        ele.adminID === userID && <Wrapper key={ele.id} className='d-flex'>
+                                            <BlogCard profileBlog={true}  title={ele.title} content={ele.content} image={ele.image} adminName={ele.adminName} adminID={ele.adminID} date={ele.date}
+                                                likes={ele.likes} docID={ele.id} />
+                                        </Wrapper>
+
+                                    )
+                                })
+                            }
+
+                        </BlogsContainer>
+                }
             </RightBox>
         </>
     )

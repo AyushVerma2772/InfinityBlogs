@@ -50,7 +50,7 @@
     padding: 0.5rem;
 }
 
-.menu-item:hover .icon  {
+.menu-item:hover .icon {
     transition: all 0.2s ease;
     color: #00ff0d;
     transform: scale(1.2);
@@ -62,7 +62,6 @@
     font-size: 1.6rem;
     transition: all 0.2s ease;
 }
-
 
 
 .icon-title {
@@ -84,13 +83,26 @@
     color: #fffefe;
     text-decoration: none;
     font-family: 'Ubuntu', sans-serif;
+    overflow: hidden;
+    max-width: 15rem;
+    max-height: 2.8rem;
 }
 
 .user-img {
     width: 4.5rem;
     height: 4.5rem;
     border-radius: 50%;
-    
+    object-fit: fill;
+}
+
+.active .icon,
+.active .icon-title {
+    /* position: relative;
+    transition: all 0.2s ease;
+    top: -0.8rem; */
+    /* top: 30px; */
+    /* transform: scale(1.1); */
+    color: #00ff0d;
 }
 
 .logout-btn {
@@ -143,7 +155,25 @@
         /* visibility: visible;
         opacity: 1; */
     }
-   
 
-    
+    .logo-name a {
+        font-size: 3.5rem;
+    }
+
+    .user-name {
+        font-size: 3rem;
+        max-width: 20rem;
+        max-height: 5rem;
+    }
+
+    .icon {
+        font-size: 2.5rem;
+    }
+
+    .icon-title {
+        font-size: 2.3rem;
+    }
+
+
+
 }

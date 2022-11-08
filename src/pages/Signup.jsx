@@ -1,8 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Heading2, purple, white, Input, Button, green, red, titleFont } from '../styles/commonComp';
-import  loadingGif  from '../images/loading-gif.gif';
-import { Link } from 'react-router-dom';
+import loadingGif from '../images/loading-gif.gif';
+import { Link, useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db, storage } from '../firebase-config';
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import {doc, setDoc } from 'firebase/firestore';
+
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -93,22 +98,94 @@ const FileInput = styled(Input)`
 
 
 const Signup = () => {
+
+  const [err, setErr] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+
+    const name = e.target[0].value;
+    const email = e.target[1].value;
+    const password = e.target[2].value;
+    const file = e.target[3].files[0];
+
+    if (name && email && password) {
+      setErr(null)
+
+      setLoading(true);
+      try {
+        const response = await createUserWithEmailAndPassword(auth, email, password);
+        const user = response.user;
+        const date = new Date().getTime();
+        // creating ref of storage
+        const storageRef = ref(storage, `profileImages/${name + date}`);
+        // creating ref of user document
+        const docRef = doc(db, "users", user.uid);
+
+        await uploadBytesResumable(storageRef, file).then(() => {
+          getDownloadURL(storageRef).then(async (downloadURL) => {
+            try {
+              // updating profile of user
+              await updateProfile(user, {
+                displayName: name,
+                photoURL: downloadURL
+              })
+              
+              // creating a doc for user
+              await setDoc(docRef, {
+                uid: user.uid,
+                displayName: name,
+                photoURL: downloadURL,
+                email: email,
+                following: []
+              })
+
+            } catch (error) {
+              setErr(err)
+            }
+          })
+        })
+
+        // console.log(user)
+        navigate("/");
+
+      } catch (error) {
+        setErr(error.message)
+      }
+      setLoading(false)
+
+
+    }
+
+    else {
+      setErr("Please fill all fields")
+    }
+
+
+  }
+
+
   return (
     <>
       <Wrapper className='d-flex'>
         <LoginCard className='d-flex' >
           <LoginHeading>Register</LoginHeading>
 
-          <LoginForm className='d-flex' >
-            <Input type="text" id='name' placeholder='Name' />
-            <Input type="email" id='email' placeholder='@email.com' />
-            <Input type="password" id='password' placeholder='password' />
-            <Input type="password" id='password' placeholder='Confirm password' />
+          <LoginForm className='d-flex' onSubmit={e => handelSubmit(e)} >
+            <Input type="text" id='name' placeholder='Name' required />
+            <Input type="email" id='email' placeholder='@email.com' required />
+            <Input type="password" id='password' placeholder='password' required />
             <FileInput placeholder='Add an Avatar' type={'file'} id='file-input' accept="image/*"></FileInput>
 
-            {/* <span><strong>Error !!!&nbsp;&nbsp;&nbsp;</strong>Lorem ipsum dolor sit amet.</span> */}
+            {
+              err && <span><strong>Error !!!&nbsp;&nbsp;&nbsp;</strong>{err}</span>
+            }
 
-            <LoginButton type="submit"><LoadingImg src={loadingGif} alt="" style={{display: "none"}} /> Sign Up</LoginButton>
+            <LoginButton type="submit" className='d-flex'>
+              {loading && <LoadingImg src={loadingGif} alt="" />} Sign Up
+            </LoginButton>
           </LoginForm>
 
           <Wrapper2 className='d-flex' >
