@@ -45,9 +45,6 @@ body {
     transition: all 0.3s ease-in-out;
 }
 
-.logo-img {
-    width: 7rem;
-}
 .loading-img {
     display: block;
     margin: 10rem auto;
