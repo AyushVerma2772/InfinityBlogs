@@ -1,14 +1,13 @@
-import { collection, onSnapshot } from 'firebase/firestore';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useContext } from 'react';
 import { useState } from 'react';
 import styled from 'styled-components';
 import ProfileCard from '../components/ProfileCard';
 import { AuthContext } from '../context/AuthContext';
-import { db } from '../firebase-config';
 import { Input, lightPurple, PageHeading } from '../styles/commonComp';
 import { mobile1 } from '../styles/Responsive';
 import infinityGif from '../images/infinity-gif.gif';
+import { UsersContext } from '../context/UsersContext';
 
 
 const Wrapper = styled.div`
@@ -27,7 +26,6 @@ const SearchBox = styled(Input)`
     padding: 1rem;
 `;
 
-
 const Wrapper2 = styled.div`
     margin-top: 2rem;
     width: 100%;
@@ -37,25 +35,9 @@ const Wrapper2 = styled.div`
 
 const Search = () => {
 
-    const [users, setUsers] = useState([]);
+    const users = useContext(UsersContext);
     const currentUser = useContext(AuthContext);
-    const colRef = collection(db, "users");
     const [search, setSearch] = useState("");
-
-    //! Realtime Read of todos
-    useEffect(() => {
-        const unsub = onSnapshot(colRef, snapshot => {
-            setUsers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-        });
-
-        return () => {
-            unsub();
-        }
-
-        // eslint-disable-next-line
-    }, [])
-
-
 
     return (
         <>

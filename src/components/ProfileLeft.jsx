@@ -6,10 +6,11 @@ import ProfileCard from '../components/ProfileCard';
 import { mobile1 } from '../styles/Responsive';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { collection, doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase-config';
 import infinityGif from '../images/infinity-gif.gif';
 import { updateProfile } from 'firebase/auth';
+import { UsersContext } from '../context/UsersContext';
 
 const LeftBox = styled.div`
     width: 32%;
@@ -102,15 +103,14 @@ const FollowingCard = styled.div`
 const ProfileLeft = (props) => {
     const { openLeft, userID } = props;
     const currentUser = useContext(AuthContext);
-    const [users, setUsers] = useState([]);
-    const colRef = collection(db, "users");
+    const users = useContext(UsersContext);
     const [userData, setUserData] = useState(null)
     const docRef = doc(db, "users", userID);
     const [search, setSearch] = useState("");
 
     //! Fetching data of  userID data
     useEffect(() => {
-        
+
         const unsub = onSnapshot(docRef, (doc) => {
             // console.log(doc.data().following);
             setUserData(doc.data());
@@ -122,29 +122,18 @@ const ProfileLeft = (props) => {
         // eslint-disable-next-line
     }, [userID]);
 
-
-    //! Fetching data of all users
-    useEffect(() => {
-        const unsub = onSnapshot(colRef, snapshot => {
-            setUsers(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-        });
-
-        return () => {
-            unsub();
-        }
-
-        // eslint-disable-next-line
-    }, [])
-
     //! edit name
-
     const handleEdit = async () => {
         const newName = prompt("Enter new name");
 
         if (newName) {
             await updateProfile(currentUser, {
                 displayName: newName
-            })  
+            })
+
+            await updateDoc(docRef, {
+                displayName: newName
+            })
             window.location.reload();
         }
 
@@ -153,45 +142,42 @@ const ProfileLeft = (props) => {
         }
     }
 
-
-
-
     return (
         <>
             <LeftBox className={`${openLeft ? 'open-left' : ''}`} >
                 {
-                    !userData ? <img src={infinityGif} alt="" className='loading-img' />  :
+                    !userData ? <img src={infinityGif} alt="" className='loading-img' /> :
 
-                <>
-                    <UserInfo className='d-flex'>
-                        <Image src={userData?.photoURL} alt="profile-image" />
-                        <UserNameBox className='d-flex'>
-                            <UserName>{currentUser.displayName}</UserName>
+                        <>
+                            <UserInfo className='d-flex'>
+                                <Image src={userData.photoURL} alt="profile-image" onClick={e => window.open(e.target.src, "_blank") } />
+                                <UserNameBox className='d-flex'>
+                                    <UserName>{userData.displayName}</UserName>
 
-                            {currentUser.uid === userData?.uid && <EditBtn><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
+                                    {currentUser.uid === userData?.uid && <EditBtn><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
 
-                        </UserNameBox>
-                        <UserId>{userData?.email}</UserId>
-                    </UserInfo>
+                                </UserNameBox>
+                                <UserId>{userData.email}</UserId>
+                            </UserInfo>
 
-                    <Input type="text" placeholder='Search Following...' style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)}  />
+                            <Input type="text" placeholder='Search Following...' style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)} />
 
-                    <SearchBox >
+                            <SearchBox >
 
-                        {
-                            users.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
-                                return (
-                                    userData.following.includes(ele.uid) &&
-                                    <FollowingCard key={ele.id}>
-                                        <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
-                                    </FollowingCard>
-                                )
-                            })
+                                {
+                                    users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
+                                        return (
+                                            userData.following.includes(ele.uid) &&
+                                            <FollowingCard key={ele.id}>
+                                                <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
+                                            </FollowingCard>
+                                        )
+                                    })
 
-                        }
+                                }
 
-                    </SearchBox>
-                </>
+                            </SearchBox>
+                        </>
                 }
 
             </LeftBox>

@@ -64,7 +64,7 @@ const Navbar = () => {
                 </div>
 
                 <div className="d-flex user-info">
-                    <img src={currentUser.photoURL} alt="profile-img" className='user-img' />
+                    <img src={currentUser.photoURL} alt="profile-img" className='user-img' onClick={e => window.open(e.target.src, '_blank') } />
                     <NavLink className='user-name' to={`/profile/${currentUser.uid}`} >{currentUser.displayName}</NavLink>
                     <button className='logout-btn' onClick={logOut} >Logout</button>
                 </div>

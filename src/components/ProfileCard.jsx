@@ -103,9 +103,9 @@ const ProfileCard = (props) => {
 
     return (
         <>
-            <Wrapper className='d-flex'>
+            <Wrapper className='d-flex' >
 
-                <UserInfo className='d-flex' style={{ width: '70%' }} >
+                <UserInfo className='d-flex link' style={{ width: '70%' }} as={Link} to={`/profile/${userID}`}>
                     <Image src={photoURL} alt="profile-image" />
 
                     <Wrapper2 className='d-flex'>

@@ -2,14 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthContextProvider } from './context/AuthContext';
+import { BlogsContextProvider } from './context/BlogsContext';
+import { UsersContextProvider } from './context/UsersContext';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <AuthContextProvider>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <UsersContextProvider>
+      <BlogsContextProvider>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+      </BlogsContextProvider>
+    </UsersContextProvider>
   </AuthContextProvider>
 );
 

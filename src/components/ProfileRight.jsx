@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { darkPurple, Heading3 } from '../styles/commonComp';
 import BlogCard from './BlogCard';
 import { FaUserCheck } from "react-icons/fa";
 import { mobile1 } from '../styles/Responsive';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase-config';
 import infinityGif from '../images/infinity-gif.gif';
+import { useContext } from 'react';
+import { BlogsContext } from '../context/BlogsContext';
 
 const RightBox = styled.div`
     width: 68%;
@@ -68,23 +68,7 @@ const Wrapper = styled.div`
 const ProfileRight = (props) => {
 
     const { setOpenLeft, openLeft, userID } = props;
-
-    const colRef = collection(db, "blogs");
-    const [blogs, setBlogs] = useState([]);
-
-    //! Realtime Read of blogs
-    useEffect(() => {
-        const unsub = onSnapshot(colRef, snapshot => {
-            setBlogs(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-        });
-
-        return () => {
-            unsub();
-        }
-
-        // eslint-disable-next-line
-    }, []);
-
+    const blogs = useContext(BlogsContext);
 
     return (
         <>

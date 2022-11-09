@@ -1,9 +1,9 @@
-import { collection, onSnapshot } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { db } from '../firebase-config';
 import BlogCard from './BlogCard';
 import infinityGif from '../images/infinity-gif.gif';
+import { useContext } from 'react';
+import { BlogsContext } from '../context/BlogsContext';
 
 const Wrapper = styled.div`
     flex-direction: column;
@@ -16,22 +16,7 @@ const Wrapper = styled.div`
 
 const Blogs = () => {
 
-    const colRef = collection(db, "blogs");
-    const [blogs, setBlogs] = useState([]);
-
-    //! Realtime Read of blogs
-    useEffect(() => {
-
-        const unsub = onSnapshot(colRef, snapshot => {
-            setBlogs(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
-        });
-
-        return () => {
-            unsub();
-        }
-
-        // eslint-disable-next-line
-    }, []);
+    const blogs = useContext(BlogsContext);
 
     return (
         <>

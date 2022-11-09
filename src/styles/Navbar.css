@@ -140,6 +140,7 @@
     }
 
     .menu-item {
+        width: 100%;
         flex-direction: row;
         gap: 1.5rem;
     }

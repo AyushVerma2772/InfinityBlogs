@@ -23,6 +23,7 @@ const BlogCard = (props) => {
     const myTitle = useRef();
     const myContent = useRef();
 
+    //! Handle Edit 
     const handleEdit = async () => {
         setEdit(!edit);
 
@@ -43,6 +44,7 @@ const BlogCard = (props) => {
 
     }
 
+    //! Handle Likes 
     const handleLike = async () => {
         if (likes.includes(currentUser.uid)) {
             const index = likes.indexOf(currentUser.uid);
@@ -58,6 +60,7 @@ const BlogCard = (props) => {
         })
     }
 
+    //! Handle delete 
     const handleDelete = async () => {
         if (window.confirm(`Do you want delete ${title} blog ?`)) await deleteDoc(docRef);
     }
@@ -187,8 +190,8 @@ const BlogCard = (props) => {
 
     return (
         <>
-            <Card className='d-flex' >
-                <Image src={image} />
+            <Card className='d-flex' onDoubleClick={handleLike} >
+                <Image src={image} onclick={e => {window.open(e.target.src, '_blank'); console.log(e.target.src)} } />
 
                 <ContentBox className='d-flex' >
                     <Date>{date}</Date>
