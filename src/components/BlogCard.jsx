@@ -191,7 +191,7 @@ const BlogCard = (props) => {
     return (
         <>
             <Card className='d-flex' onDoubleClick={handleLike} >
-                <Image src={image} onclick={e => {window.open(e.target.src, '_blank'); console.log(e.target.src)} } />
+                <Image src={image} onclick={e => {window.open(e.target.src, '_blank')} />
 
                 <ContentBox className='d-flex' >
                     <Date>{date}</Date>
