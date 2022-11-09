@@ -40,7 +40,6 @@ body {
     text-decoration: none;
 }
 
-
 .open-left {
     left: 0 !important;
     transition: all 0.3s ease-in-out;
