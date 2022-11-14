@@ -7,6 +7,8 @@ import { mobile1 } from '../styles/Responsive';
 import infinityGif from '../images/infinity-gif.gif';
 import { useContext } from 'react';
 import { BlogsContext } from '../context/BlogsContext';
+import { FiEdit } from "react-icons/fi";
+import { Link } from 'react-router-dom';
 
 const RightBox = styled.div`
     width: 68%;
@@ -16,23 +18,28 @@ const RightBox = styled.div`
 
 const Header = styled.header`
     height: 6rem;
-    padding-left: 4rem;
+    padding: 0 4rem;
     border-bottom: 0.2rem solid ${darkPurple};
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 1.5rem;
+    
+    
 
     h3 {
         text-align: left;
         color: ${darkPurple};
-        ${mobile1({ paddingLeft: '4rem', borderLeft: `0.2rem solid ${darkPurple}` })}
+        /* ${mobile1({ paddingLeft: '4rem', borderLeft: `0.2rem solid ${darkPurple}` })} */
         z-index: 2;
     }
 
-    .following-icon {
+    .create-blog-link, .following-icon {
         font-size: 3rem;
         color: ${darkPurple};
-        z-index: 99 ;
         cursor: pointer;
+    }
+
+    .following-icon {
+        z-index: 99 ;
         display: none;
         ${mobile1({ display: 'block' })}
     }
@@ -75,7 +82,9 @@ const ProfileRight = (props) => {
             <RightBox>
                 <Header className='d-flex' >
                     <FaUserCheck className='following-icon' onClick={e => setOpenLeft(!openLeft)} />
-                    <Heading3>Your Blogs</Heading3>
+                    <Heading3>{} Blogs</Heading3>
+                    <Link to="/create-blog"><FiEdit className='create-blog-link' /></Link>
+                    
                 </Header>
 
                 {

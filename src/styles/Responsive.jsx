@@ -7,3 +7,10 @@ export const mobile1 = (resCss) => {
         }
     `;
 };
+export const mobile2 = (resCss) => {
+    return css`
+        @media only screen and (max-width: 780px) {
+            ${resCss};
+        }
+    `;
+};

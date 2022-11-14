@@ -5,17 +5,22 @@ import styled from 'styled-components';
 import { AuthContext } from '../context/AuthContext';
 import { db } from '../firebase-config';
 import { Button, Heading4, purple, titleFont, white } from '../styles/commonComp';
-import { mobile1 } from '../styles/Responsive';
+import { mobile1, mobile2 } from '../styles/Responsive';
 
 
 const ProfileCard = (props) => {
+    const { followingCard, displayName, photoURL, email, userID } = props;
+
     const currentUser = useContext(AuthContext);
-    const [currentUserData, setCurrentUserData] = useState(null)
-    const docRef = doc(db, "users", currentUser.uid);
+    const [currentUserData, setCurrentUserData] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const currentUserDocRef = doc(db, "users", currentUser.uid);
+    const userDocRef = doc(db, "users", userID);
+
 
     //! Fetching current user data
     useEffect(() => {
-        const unsub = onSnapshot(docRef, (doc) => {
+        const unsub = onSnapshot(currentUserDocRef, (doc) => {
             setCurrentUserData(doc.data());
         });
 
@@ -24,28 +29,50 @@ const ProfileCard = (props) => {
         }
 
         // eslint-disable-next-line
-    }, [])
+    }, []);
+
+    //! Fetching data of user 
+    useEffect(() => {
+        const unsub = onSnapshot(userDocRef, (doc) => {
+            setUserData(doc.data());
+        });
+
+        return () => {
+            unsub();
+        }
+
+        // eslint-disable-next-line
+    }, []);
+
 
     // handle follow
     const handleFollow = async () => {
         if (currentUserData.following.includes(userID)) {
             const index = currentUserData.following.indexOf(userID);
             currentUserData.following.splice(index, 1)
+
+            const index1 = userData.followers.indexOf(currentUser.uid);
+            userData.followers.splice(index1, 1);
         }
 
         else {
-            currentUserData.following.push(userID)
+            currentUserData.following.push(userID);
+            userData.followers.push(currentUser.uid);
         }
 
-        await updateDoc(docRef, {
+        await updateDoc(currentUserDocRef, {
             following: currentUserData.following
+        })
+
+        await updateDoc(userDocRef, {
+            followers: userData.followers
         })
     }
 
 
 
 
-    const { followingCard, displayName, photoURL, email, userID } = props;
+    
 
     const Wrapper = styled.div`
         width: ${followingCard ? '95%' : '83%'};
@@ -92,13 +119,14 @@ const ProfileCard = (props) => {
     `;
 
     const FollowBtn = styled(Button)`   
-        width: 20%;
+        width: 21%;
         background-color: ${currentUserData?.following.includes(userID) ?  `${white}` : `${purple}`};
         color: ${currentUserData?.following.includes(userID) ?  `${purple}` : `${white}`};
         border: ${currentUserData?.following.includes(userID) ?  `0.1rem solid ${purple}` : '0'};
         gap: ${followingCard ? '0.5rem' : '1rem'};;
         font-size: ${followingCard ? '1.4rem' : '1.8rem'};;
         font-weight: 600;
+        ${mobile2({width: '28%'})}
     `;
 
     return (

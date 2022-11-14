@@ -139,7 +139,8 @@ const Signup = () => {
                 displayName: name,
                 photoURL: downloadURL,
                 email: email,
-                following: []
+                following: [],
+                followers: []
               })
 
             } catch (error) {

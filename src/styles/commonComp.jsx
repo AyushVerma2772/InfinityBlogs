@@ -44,7 +44,7 @@ export const Heading4 = styled.h4`
     font-family: ${titleFont};
 `;
 
-export const Heading5 = styled.h4`
+export const Heading5 = styled.h5`
     font-size: 2.5rem;
     color: ${darkPurple};
     text-align: center;

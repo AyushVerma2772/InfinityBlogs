@@ -10,6 +10,7 @@ import loadingGif from '../images/loading-gif.gif';
 import { BsCheckLg } from "react-icons/bs";
 import { useState } from 'react';
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage';
+import { useNavigate } from 'react-router-dom';
 
 
 const CreateBlogForm = styled.form`
@@ -91,6 +92,7 @@ const CreateBlog = () => {
     const currentUser = useContext(AuthContext);
     const [loading, setLoading] = useState(false);
     const [published, setPublished] = useState(false);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -126,6 +128,7 @@ const CreateBlog = () => {
         setPublished(true);
         setTimeout(() => {
             setPublished(false);
+            navigate("/");
         }, 1500);
 
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { black, darkPurple, Heading4, Input, lightPurple, titleFont, white } from '../styles/commonComp';
+import { black, darkPurple, Heading4, Heading5, Input, lightPurple, titleFont, white } from '../styles/commonComp';
 import { BsFillPencilFill } from "react-icons/bs";
 import ProfileCard from '../components/ProfileCard';
 import { mobile1 } from '../styles/Responsive';
@@ -20,21 +20,28 @@ const LeftBox = styled.div`
     padding: 0.5rem;
     transition: all 0.3s ease-in-out;
     z-index: 3;
-    ${mobile1({ position: 'absolute', width: '100%', backgroundColor: `${lightPurple}`, left: '-100%', height: '97vh', top: '0' })}
+    ${mobile1({ position: 'absolute', width: '100%', backgroundColor: `${lightPurple}`, left: '-100%', height: '100vh', top: '0' })}
 `;
 
 const UserInfo = styled.div`
     width: 100%;
-    flex-direction: column;
-    gap: 1.5rem;
-    height: 21rem;
-    ${mobile1({ gap: '2rem', height: '30rem', marginBottom: '2rem' })}
+    justify-content: space-between;
+    padding: 0 1.5rem;
+    gap: 1rem;
+    height: 15rem;
+    ${mobile1({ gap: '2rem', height: '28rem', marginBottom: '2rem', flexDirection: 'column', justifyContent: 'center' })}
 `;
 
 const UserNameBox = styled.div`
-    width: 100%;
-    gap: 1.5rem;
-    ${mobile1({ height: '5rem' })}
+    flex-direction: column;
+    width: 65%;
+    gap: 0.5rem;
+    ${mobile1({ height: '8rem', width: '80%' })}
+
+    div {
+        width: 100%;
+        gap: 1.5rem;
+    }
 `;
 
 const Image = styled.img`
@@ -55,8 +62,7 @@ const UserName = styled(Heading4)`
 `;
 
 const EditBtn = styled.button`
-    width: 10%;
-    height: 2.8rem;
+    padding: 0.5rem 0.7rem;
     cursor: pointer;
     color: ${black};
     background-color: #ffc107;
@@ -79,7 +85,7 @@ const UserId = styled.h5`
 `;
 
 const SearchBox = styled.div`
-    height: calc(90vh - 25rem);
+    height: calc(90vh - 24rem);
     padding: 1rem;
     flex-direction: column;
     overflow: auto;
@@ -100,6 +106,19 @@ const FollowingCard = styled.div`
 `;
 
 
+const Nav = styled.div`
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    ${mobile1({padding: '2rem 3rem'})}
+    h5 {
+        padding: 0 0.5rem;
+        font-size: 1.8rem;
+        cursor: pointer;
+    }
+`;
+
+
 const ProfileLeft = (props) => {
     const { openLeft, userID } = props;
     const currentUser = useContext(AuthContext);
@@ -107,6 +126,8 @@ const ProfileLeft = (props) => {
     const [userData, setUserData] = useState(null)
     const docRef = doc(db, "users", userID);
     const [search, setSearch] = useState("");
+    const [follow, setFollow] = useState("followers")
+
 
     //! Fetching data of  userID data
     useEffect(() => {
@@ -150,24 +171,48 @@ const ProfileLeft = (props) => {
 
                         <>
                             <UserInfo className='d-flex'>
-                                <Image src={userData.photoURL} alt="profile-image" onClick={e => window.open(e.target.src, "_blank") } />
+                                <Image src={userData.photoURL} alt="profile-image" onClick={e => window.open(e.target.src, "_blank")} />
                                 <UserNameBox className='d-flex'>
-                                    <UserName>{userData.displayName}</UserName>
+                                    <div className='d-flex' >
+                                        <UserName>{userData.displayName}</UserName>
 
-                                    {currentUser.uid === userData?.uid && <EditBtn><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
+                                        {currentUser.uid === userData?.uid && <EditBtn title='Edit'><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
+                                    </div>
 
+                                    <UserId>{userData.email}</UserId>
                                 </UserNameBox>
-                                <UserId>{userData.email}</UserId>
                             </UserInfo>
 
-                            <Input type="text" placeholder='Search Following...' style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)} />
+                            <Nav>
+                                <Heading5 onClick={e => setFollow("followers")} style={{borderBottom: `${follow === 'followers' ? '0.2rem solid #410179': ''}`}} >Followers {userData.followers.length} </Heading5>
+
+                                <Heading5 onClick={e => setFollow("following")} style={{borderBottom: `${follow === 'following' ? '0.2rem solid #410179': ''}`}}>Following {userData.following.length}</Heading5>
+
+                            </Nav>
+
+                            <Input type="text" placeholder={`Search ${follow}`} style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)} />
 
                             <SearchBox >
 
                                 {
+                                    follow === 'following' ?
+
                                     users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
                                         return (
+                                            // agar userData ki following m ele ki uid ha to use show karo
                                             userData.following.includes(ele.uid) &&
+                                            <FollowingCard key={ele.id}>
+                                                <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
+                                            </FollowingCard>
+                                        )
+                                    })
+
+                                    :
+
+                                    users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
+                                        return (
+                                            // agar userData ki followers m ele ki uid ha to use show karo
+                                            userData.followers.includes(ele.uid) &&
                                             <FollowingCard key={ele.id}>
                                                 <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
                                             </FollowingCard>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Heading2, purple, white, Input, Button, green, red, titleFont } from '../styles/commonComp';
+import { Heading2, purple, white, Input, Button, green, red, titleFont, Heading5, paraFont, darkPurple} from '../styles/commonComp';
 import loadingGif from '../images/loading-gif.gif';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -65,6 +65,34 @@ const SignupBtn = styled(Link)`
   margin-left: 2.5rem;
 `;
 
+const DemoUser = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  h5 {
+    text-align: left;
+    padding: 0 3rem;
+    font-size: 2rem;
+  }
+
+  span, h6 {
+    font-family: ${paraFont};
+    color: ${darkPurple};
+  }
+  
+  span {
+    font-size: 1.8rem;
+    padding: 0 0.7rem;
+  }
+  
+  h6 {
+    color: #646464;
+    padding: 0 5rem;
+    font-size: 1.5rem;
+  }
+`;
+
 const Login = () => {
 
   const [err, setErr] = useState(null);
@@ -115,6 +143,12 @@ const Login = () => {
               {loading && <LoadingImg src={loadingGif} alt="" />} Login
             </LoginButton>
           </LoginForm>
+
+          <DemoUser>
+            <Heading5>Demo User</Heading5>
+            <h6><span>Email:</span>ironman@gmail.com</h6>
+            <h6><span>Password:</span>imironman</h6>
+          </DemoUser>
 
           <Wrapper2 className='d-flex' >
             <p>Not Registered Yet ? </p>

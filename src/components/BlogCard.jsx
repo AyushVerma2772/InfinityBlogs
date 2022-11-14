@@ -156,7 +156,7 @@ const BlogCard = (props) => {
         max-height:  ${profileBlog ? '7rem' : '8rem'};
         overflow: hidden;
         margin:  ${profileBlog ? '0.3rem 0' : '0.5rem 0'};
-        font-size: ${profileBlog && '1.4rem'};
+        font-size: ${profileBlog && '1.6rem'};
         border-bottom: 0.1rem solid ${lightPurple};
         outline: 0;
         border: ${edit && `0.1rem solid ${lightPurple}`};
