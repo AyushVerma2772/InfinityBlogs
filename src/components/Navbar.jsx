@@ -16,11 +16,6 @@ import { auth } from '../firebase-config';
 
 const Navbar = () => {
     const [openNav, setOpenNav] = useState(false);
-
-    const logOut = () => {
-        signOut(auth);
-    }
-
     const currentUser = useContext(AuthContext);
 
     return (
@@ -64,9 +59,10 @@ const Navbar = () => {
                 </div>
 
                 <div className="d-flex user-info">
-                    <img src={currentUser.photoURL} alt="profile-img" className='user-img' onClick={e => window.open(e.target.src, '_blank') } />
+                    <img src={currentUser.photoURL} alt="profile-img" className='user-img' onClick={e => window.open(e.target.src, '_blank') } onError={e => {e.target.src = "https://cdn-icons-png.flaticon.com/512/4333/4333609.png"}} />
+
                     <NavLink className='user-name' to={`/profile/${currentUser.uid}`} >{currentUser.displayName}</NavLink>
-                    <button className='logout-btn' onClick={logOut} >Logout</button>
+                    <button className='logout-btn' onClick={() => signOut(auth)} >Logout</button>
                 </div>
 
             </nav>

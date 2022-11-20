@@ -8,9 +8,12 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import infinityGif from '../images/infinity-gif.gif';
+// import infinityGif from '../images/infinity-gif.gif';
 import { updateProfile } from 'firebase/auth';
 import { UsersContext } from '../context/UsersContext';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+import ProfileCardSkeleton from './ProfileCardSkeleton';
 
 const LeftBox = styled.div`
     width: 32%;
@@ -110,7 +113,7 @@ const Nav = styled.div`
     display: flex;
     justify-content: space-between;
     padding: 1rem 2rem;
-    ${mobile1({padding: '2rem 3rem'})}
+    ${mobile1({ padding: '2rem 3rem' })}
     h5 {
         padding: 0 0.5rem;
         font-size: 1.8rem;
@@ -126,7 +129,8 @@ const ProfileLeft = (props) => {
     const [userData, setUserData] = useState(null)
     const docRef = doc(db, "users", userID);
     const [search, setSearch] = useState("");
-    const [follow, setFollow] = useState("followers")
+    const [follow, setFollow] = useState("followers");
+    const array = Array(5).fill(0);
 
 
     //! Fetching data of  userID data
@@ -166,64 +170,67 @@ const ProfileLeft = (props) => {
     return (
         <>
             <LeftBox className={`${openLeft ? 'open-left' : ''}`} >
-                {
-                    !userData ? <img src={infinityGif} alt="" className='loading-img' /> :
 
-                        <>
-                            <UserInfo className='d-flex'>
-                                <Image src={userData.photoURL} alt="profile-image" onClick={e => window.open(e.target.src, "_blank")} />
-                                <UserNameBox className='d-flex'>
-                                    <div className='d-flex' >
-                                        <UserName>{userData.displayName}</UserName>
+                <UserInfo className='d-flex'>
+                    {
+                        userData ? <Image src={userData.photoURL} alt="profile-image" onClick={e => window.open(e.target.src, "_blank")} onError={e => {e.target.src = "https://cdn-icons-png.flaticon.com/512/4333/4333609.png"}} />:
+                        <Skeleton width={'12rem'} height={'12rem'} highlightColor="#d4abf869" baseColor='#fae6ffd7' />
+                    }
 
-                                        {currentUser.uid === userData?.uid && <EditBtn title='Edit'><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
-                                    </div>
+                    <UserNameBox className='d-flex'>
+                        <div className='d-flex' >
 
-                                    <UserId>{userData.email}</UserId>
-                                </UserNameBox>
-                            </UserInfo>
+                            <UserName>{ userData ? userData.displayName: <Skeleton width={'15rem'} height={'1.8rem'} highlightColor="#d4abf869" baseColor='#fae6ffd7' /> }</UserName>
 
-                            <Nav>
-                                <Heading5 onClick={e => setFollow("followers")} style={{borderBottom: `${follow === 'followers' ? '0.2rem solid #410179': ''}`}} >Followers {userData.followers.length} </Heading5>
+                            {currentUser.uid === userData?.uid && <EditBtn title='Edit'><BsFillPencilFill className='edit-icon' onClick={handleEdit} /></EditBtn>}
+                        </div>
 
-                                <Heading5 onClick={e => setFollow("following")} style={{borderBottom: `${follow === 'following' ? '0.2rem solid #410179': ''}`}}>Following {userData.following.length}</Heading5>
+                        <UserId>{ userData ? userData.email:  <Skeleton width={'15rem'} height={'1.8rem'} highlightColor="#d4abf869" baseColor='#fae6ffd7' />}</UserId>
+                    </UserNameBox>
+                </UserInfo>
 
-                            </Nav>
+                <Nav>
+                    <Heading5 onClick={e => setFollow("followers")} style={{ borderBottom: `${follow === 'followers' ? '0.2rem solid #410179' : ''}` }} >Followers {userData?.followers.length} </Heading5>
 
-                            <Input type="text" placeholder={`Search ${follow}`} style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)} />
+                    <Heading5 onClick={e => setFollow("following")} style={{ borderBottom: `${follow === 'following' ? '0.2rem solid #410179' : ''}` }}>Following {userData?.following.length}</Heading5>
 
-                            <SearchBox >
+                </Nav>
 
-                                {
-                                    follow === 'following' ?
+                <Input type="text" placeholder={`Search ${follow}`} style={{ width: '95%', margin: '0 auto', display: 'block' }} value={search} onChange={e => setSearch(e.target.value)} />
 
-                                    users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
-                                        return (
-                                            // agar userData ki following m ele ki uid ha to use show karo
-                                            userData.following.includes(ele.uid) &&
-                                            <FollowingCard key={ele.id}>
-                                                <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
-                                            </FollowingCard>
-                                        )
-                                    })
+                <SearchBox >
 
-                                    :
+                    {
+                        follow === 'following' ?
 
-                                    users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
-                                        return (
-                                            // agar userData ki followers m ele ki uid ha to use show karo
-                                            userData.followers.includes(ele.uid) &&
-                                            <FollowingCard key={ele.id}>
-                                                <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
-                                            </FollowingCard>
-                                        )
-                                    })
+                            !userData ? array.map((ele, i) => (<FollowingCard key={i}> <ProfileCardSkeleton/></FollowingCard> )) : 
 
-                                }
+                            users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
+                                return (
+                                    // agar userData ki following m ele ki uid ha to use show karo
+                                    userData.following.includes(ele.uid) &&
+                                    <FollowingCard key={ele.id}>
+                                        <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
+                                    </FollowingCard>
+                                )
+                            })
 
-                            </SearchBox>
-                        </>
-                }
+                            :
+
+                            !userData ? array.map((ele, i) => (<FollowingCard key={i}> <ProfileCardSkeleton/></FollowingCard> )) : 
+                            users?.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {
+                                return (
+                                    // agar userData ki followers m ele ki uid ha to use show karo
+                                    userData.followers.includes(ele.uid) &&
+                                    <FollowingCard key={ele.id}>
+                                        <ProfileCard followingCard={true} displayName={ele.displayName} photoURL={ele.photoURL} email={ele.email} userID={ele.uid} />
+                                    </FollowingCard>
+                                )
+                            })
+
+                    }
+
+                </SearchBox>
 
             </LeftBox>
         </>

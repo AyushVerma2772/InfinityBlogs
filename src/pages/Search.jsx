@@ -6,8 +6,9 @@ import ProfileCard from '../components/ProfileCard';
 import { AuthContext } from '../context/AuthContext';
 import { Input, lightPurple, PageHeading } from '../styles/commonComp';
 import { mobile1 } from '../styles/Responsive';
-import infinityGif from '../images/infinity-gif.gif';
+// import infinityGif from '../images/infinity-gif.gif';
 import { UsersContext } from '../context/UsersContext';
+import ProfileCardSkeleton from '../components/ProfileCardSkeleton';
 
 
 const Wrapper = styled.div`
@@ -38,15 +39,22 @@ const Search = () => {
     const users = useContext(UsersContext);
     const currentUser = useContext(AuthContext);
     const [search, setSearch] = useState("");
+    const array = Array(5).fill(0)
 
     return (
         <>
             <PageHeading>Search for a user</PageHeading>
             <Wrapper className='d-flex'>
-                <SearchBox type="text" placeholder='Search..' value={search} onChange={e => setSearch(e.target.value)} />
+                <SearchBox type="text" placeholder='Search...🔍' value={search} onChange={e => setSearch(e.target.value)} />
 
                 {
-                    !users.length ? <img src={infinityGif} alt="" className='loading-img' /> :
+                    !users.length ?
+
+                        array.map((ele, i) => (
+                            <Wrapper2 key={i}> <ProfileCardSkeleton /> </Wrapper2>
+                        ))
+
+                        :
                         <Wrapper2 className='d-flex' >
                             {
                                 users.filter((e) => e.displayName.toLowerCase().includes(search.toLowerCase())).map((ele) => {

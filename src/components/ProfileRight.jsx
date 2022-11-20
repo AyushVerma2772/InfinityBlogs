@@ -4,11 +4,11 @@ import { darkPurple, Heading3 } from '../styles/commonComp';
 import BlogCard from './BlogCard';
 import { FaUserCheck } from "react-icons/fa";
 import { mobile1 } from '../styles/Responsive';
-import infinityGif from '../images/infinity-gif.gif';
 import { useContext } from 'react';
 import { BlogsContext } from '../context/BlogsContext';
 import { FiEdit } from "react-icons/fi";
 import { Link } from 'react-router-dom';
+import BlogSkeleton from './BlogSkeleton';
 
 const RightBox = styled.div`
     width: 68%;
@@ -76,25 +76,38 @@ const ProfileRight = (props) => {
 
     const { setOpenLeft, openLeft, userID } = props;
     const blogs = useContext(BlogsContext);
+    const array = Array(3).fill(0);
 
     return (
         <>
             <RightBox>
                 <Header className='d-flex' >
                     <FaUserCheck className='following-icon' onClick={e => setOpenLeft(!openLeft)} />
-                    <Heading3>{} Blogs</Heading3>
+                    <Heading3>{ } Blogs</Heading3>
                     <Link to="/create-blog"><FiEdit className='create-blog-link' /></Link>
-                    
+
                 </Header>
 
                 {
-                    !blogs.length ? <img src={infinityGif} alt="" className='loading-img' /> :
+                    !blogs.length ?
+                        <BlogsContainer>
+                            {
+                                array.map((ele, i) => (
+                                    <Wrapper key={i}><BlogSkeleton /></Wrapper>
+                                ))
+
+                            }
+                        </BlogsContainer>
+
+                        :
+
+
                         <BlogsContainer >
                             {
                                 blogs.map((ele) => {
                                     return (
                                         ele.adminID === userID && <Wrapper key={ele.id} className='d-flex'>
-                                            <BlogCard profileBlog={true}  title={ele.title} content={ele.content} image={ele.image} adminName={ele.adminName} adminID={ele.adminID} date={ele.date}
+                                            <BlogCard profileBlog={true} title={ele.title} content={ele.content} image={ele.image} adminName={ele.adminName} adminID={ele.adminID} date={ele.date}
                                                 likes={ele.likes} docID={ele.id} />
                                         </Wrapper>
 

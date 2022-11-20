@@ -134,10 +134,10 @@ const ProfileCard = (props) => {
             <Wrapper className='d-flex' >
 
                 <UserInfo className='d-flex link' style={{ width: '70%' }} as={Link} to={`/profile/${userID}`}>
-                    <Image src={photoURL} alt="profile-image" />
+                    <Image src={photoURL} alt="profile-image" onError={e => {e.target.src = "https://cdn-icons-png.flaticon.com/512/4333/4333609.png"}} />
 
                     <Wrapper2 className='d-flex'>
-                        <Username as={Link} to={`/profile/${userID}`} className='link' >{displayName}</Username>
+                        <Username to={`/profile/${userID}`} className='link' >{displayName}</Username>
                         <UserId>{email}</UserId>
                     </Wrapper2>
                 </UserInfo>

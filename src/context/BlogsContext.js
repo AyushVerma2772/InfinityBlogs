@@ -15,7 +15,11 @@ export const BlogsContextProvider = ({ children }) => {
     //! Fetching data of all users
     useEffect(() => {
         const unsub = onSnapshot(colRef, snapshot => {
-            setBlogs(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })))
+            // sorting the data and set it
+            setBlogs(snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id })).sort((p1, p2) => {
+                const propertyName = 'date';
+                return p1[propertyName] < p2[propertyName] ? 1 : p1[propertyName] > p2[propertyName] ? -1 : 0
+            }));
         });
 
         return () => {
@@ -25,7 +29,7 @@ export const BlogsContextProvider = ({ children }) => {
         // eslint-disable-next-line
     }, [])
 
-    
+
 
     return (
         <BlogsContext.Provider value={blogs} >

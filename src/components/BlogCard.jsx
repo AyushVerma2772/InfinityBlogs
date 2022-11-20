@@ -11,7 +11,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import { BsCheckLg } from "react-icons/bs";
+import { BsCheckLg, BsHeartFill } from "react-icons/bs";
 import { Link } from 'react-router-dom';
 
 const BlogCard = (props) => {
@@ -20,8 +20,12 @@ const BlogCard = (props) => {
     const currentUser = useContext(AuthContext);
     const docRef = doc(db, "blogs", docID);
     const [edit, setEdit] = useState(false);
+    const [appearHeart, setAppearHeart] = useState(false);
     const myTitle = useRef();
     const myContent = useRef();
+    const blogData = {
+        adminID, adminName, image, title, content
+    }
 
     //! Handle Edit 
     const handleEdit = async () => {
@@ -54,6 +58,11 @@ const BlogCard = (props) => {
         else {
             likes.push(currentUser.uid)
         }
+        
+        setAppearHeart(true);
+        setTimeout(() => {
+            setAppearHeart(false);
+        }, 700);
 
         await updateDoc(docRef, {
             likes: likes
@@ -66,6 +75,7 @@ const BlogCard = (props) => {
     }
 
 
+
     const Card = styled.div`
         width: ${profileBlog ? '73%' : '80%'};
         height:  ${profileBlog ? '24rem' : '27rem'};
@@ -76,7 +86,31 @@ const BlogCard = (props) => {
         padding:  ${profileBlog ? '0.8rem' : '1.5rem'};
         position: relative;
         justify-content: flex-end;
+        
         ${mobile1({ height: '55rem', position: 'static', flexDirection: 'column', width: `${profileBlog ? '95%' : '95%'}`, justifyContent: 'space-between' })};
+
+        @keyframes heartAnimation {
+            0% {
+                opacity: 0;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .appear-heart {
+            color: #fb3958;
+            font-size: 10rem;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            animation: heartAnimation 0.5s ease-in-out;
+            opacity: 0;
+            z-index: 5;
+        }
+
+
     `;
 
     const Image = styled.img`
@@ -160,6 +194,21 @@ const BlogCard = (props) => {
         border-bottom: 0.1rem solid ${lightPurple};
         outline: 0;
         border: ${edit && `0.1rem solid ${lightPurple}`};
+        /* border: 2px solid red; */
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 1rem;
+            left: 0;
+            bottom: 0;
+            background-color: ${white};
+            opacity: 0.7;
+        }
+
+        
     `;
 
     const Footer = styled.footer`
@@ -193,14 +242,17 @@ const BlogCard = (props) => {
             <Card className='d-flex' onDoubleClick={handleLike} >
                 <Image src={image} onclick={e => {window.open(e.target.src, '_blank')}} />
 
+                {appearHeart && <BsHeartFill className='appear-heart'/>}
+
                 <ContentBox className='d-flex' >
+                
                     <Date>{date}</Date>
                     <UserName as={Link} to={`/profile/${adminID}`} className="link">{adminName}<GoVerified className='verify' /></UserName>
 
                     <Title contentEditable={edit} suppressContentEditableWarning={true} ref={myTitle}>{title}</Title>
                     <Content contentEditable={edit ? 'true' : 'false'} suppressContentEditableWarning={true} id="content" ref={myContent}>{content}</Content>
 
-                    <ReadBtn>Read</ReadBtn>
+                    <ReadBtn as={Link} to={`/read/${docID}`} state={blogData}>Read</ReadBtn>
 
                     <Footer className='d-flex'>
                         <FooterBtn className='d-flex' title='Like'>

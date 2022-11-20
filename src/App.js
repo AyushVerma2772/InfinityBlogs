@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Search from './pages/Search';
 import Profile from './pages/Profile';
 import { AuthContext } from './context/AuthContext';
+import Read from './pages/Read';
 
 const App = () => {
 
@@ -40,7 +41,7 @@ const App = () => {
           <Route path="/create-blog" element={currentUser ? <CreateBlog /> : <Login />} />
           <Route path="/search" element={currentUser ? <Search /> : <Login />} />
           <Route path="/profile/:userID" element={currentUser ? <Profile /> : <Login />} />
-          
+          <Route path='/read/:blogId' element={<Read />} />
         </Routes>
       </BrowserRouter>
     </>

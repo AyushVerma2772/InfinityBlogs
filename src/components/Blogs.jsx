@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import BlogCard from './BlogCard';
-import infinityGif from '../images/infinity-gif.gif';
 import { useContext } from 'react';
 import { BlogsContext } from '../context/BlogsContext';
+import BlogSkeleton from './BlogSkeleton';
 
 const Wrapper = styled.div`
     flex-direction: column;
@@ -17,11 +17,21 @@ const Wrapper = styled.div`
 const Blogs = () => {
 
     const blogs = useContext(BlogsContext);
+    const array = Array(6).fill(0);
 
     return (
         <>
-            {!blogs.length ? <img src={infinityGif} alt="" className='loading-img' />
-            :   <Wrapper className='d-flex' >
+
+            {!blogs.length ?
+                <Wrapper className='d-flex'>
+                    {
+                        array.map((ele, i) => (
+                            <BlogSkeleton key={i} />
+                        ))
+                    }
+                </Wrapper>
+                :
+                <Wrapper className='d-flex' >
                     {
 
                         blogs.map((ele) => {
