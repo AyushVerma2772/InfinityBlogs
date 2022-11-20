@@ -11,7 +11,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase-config';
-import { BsCheckLg, BsHeartFill } from "react-icons/bs";
+import { BsCheckLg } from "react-icons/bs";     // , BsHeartFill
 import { Link } from 'react-router-dom';
 
 const BlogCard = (props) => {
@@ -20,7 +20,7 @@ const BlogCard = (props) => {
     const currentUser = useContext(AuthContext);
     const docRef = doc(db, "blogs", docID);
     const [edit, setEdit] = useState(false);
-    const [appearHeart, setAppearHeart] = useState(false);
+    // const [appearHeart, setAppearHeart] = useState(false);
     const myTitle = useRef();
     const myContent = useRef();
     const blogData = {
@@ -59,10 +59,10 @@ const BlogCard = (props) => {
             likes.push(currentUser.uid)
         }
         
-        setAppearHeart(true);
-        setTimeout(() => {
-            setAppearHeart(false);
-        }, 700);
+        // setAppearHeart(true);
+        // setTimeout(() => {
+        //     setAppearHeart(false);
+        // }, 700);
 
         await updateDoc(docRef, {
             likes: likes
@@ -242,7 +242,7 @@ const BlogCard = (props) => {
             <Card className='d-flex' onDoubleClick={handleLike} >
                 <Image src={image} onclick={e => {window.open(e.target.src, '_blank')}} />
 
-                {appearHeart && <BsHeartFill className='appear-heart'/>}
+                {/* {appearHeart && <BsHeartFill className='appear-heart'/>} */}
 
                 <ContentBox className='d-flex' >
                 
